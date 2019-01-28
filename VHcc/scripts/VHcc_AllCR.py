@@ -73,7 +73,7 @@ def decrease_bin_errors(proc):
   new_hist = proc.ShapeAsTH1F();
   new_hist.Scale(proc.rate())
   for i in range(1,new_hist.GetNbinsX()+1):
-    new_hist.SetBinError(i,new_hist.GetBinError(i)/np.sqrt(2.0))
+    new_hist.SetBinError(i,new_hist.GetBinError(i)/2.0)
   proc.set_shape(new_hist,False)
 
   
@@ -190,11 +190,11 @@ if not args.doVV:
   }
 else:
   bkg_procs = {
-    'Wen' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb'],
-    'Wmn' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb'],
-    'Zmm' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb'],
-    'Zee' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb'],
-    'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','QCD'],
+    'Wen' : ['WH_hcc','ZH_hcc','WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb'],
+    'Wmn' : ['WH_hcc','ZH_hcc','WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb'],
+    'Zmm' : ['ZH_hcc','ggZH_hcc','ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb'],
+    'Zee' : ['ZH_hcc','ggZH_hcc','ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb'],
+    'Znn' : ['ZH_hcc','ggZH_hcc','WH_hcc','ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','QCD'],
     #'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb'],
   }
 
@@ -343,7 +343,6 @@ if args.rebinning_scheme == 'LF-rebin': # all channels: 1bin in TT/LF, 2bins in 
   print 'binning in CR for LF fitting variable:',binning,'for Znn channelrs'
   cb.cp().channel(['Znn']).bin_id([3]).VariableRebin(binning)
 
-  
 
 cb.FilterProcs(lambda x: drop_zero_procs(cb,x))
 cb.FilterSysts(lambda x: drop_zero_systs(x))
@@ -355,7 +354,7 @@ if args.doVV:
     cb.FilterSysts(lambda x: x.name() in "CMS_vhbb_VVcc")
     
 ### decrease bin statistical errors
-cb.cp().channel(['Zee','Zmm']).process(['Zj_cc','Zj_bbc','Zj_blc','Zj_ll']).ForEachProc(lambda x: decrease_bin_errors(x))
+#Luca cb.cp().channel(['Zee','Zmm']).process(['Zj_cc','Zj_bbc','Zj_blc','Zj_ll']).ForEachProc(lambda x: decrease_bin_errors(x))
 
 
 cb.cp().channel(['Wen','Wmn','Znn']).process(['Wj_ll']).RenameSystematic(cb,'CMS_vhbb_vjetnlodetajjrw_13TeV','CMS_Wj_ll_vhbb_vjetnlodetajjrw_13TeV')
