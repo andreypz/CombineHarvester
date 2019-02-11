@@ -329,14 +329,21 @@ def AddSystematics2016(cb, splitJEC=False):
 
 #============= tagger uncertainties
 # inclusive in pt/eta
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_btag','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_PU','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_muonTrig','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_muonId','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_muonIso','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_elecTrig','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_elecId','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_elecReco','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_LepId','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_JES','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_JER','shape',ch.SystMap()(1.0))
+#Luca  cb.cp().AddSyst(cb,'CMS_cTagWeight_muR','shape',ch.SystMap()(1.0))
+#Luca  cb.cp().AddSyst(cb,'CMS_cTagWeight_muF','shape',ch.SystMap()(1.0))
+
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_btag','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_PU','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_muonTrig','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_muonId','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_muonIso','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_elecTrig','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_elecId','shape',ch.SystMap()(1.0))
+#Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_elecReco','shape',ch.SystMap()(1.0))
   
 # differential in pt/eta
 

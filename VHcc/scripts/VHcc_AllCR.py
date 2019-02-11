@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 import CombineHarvester.CombineTools.ch as ch
@@ -181,8 +182,8 @@ input_folders = {
 
 if not args.doVV:
   bkg_procs = {
-    'Wen' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','VVcc'],
-    'Wmn' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','VVcc'],
+    'Wen' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb','VVcc'],
+    'Wmn' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb','VVcc'],
     'Zmm' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb','VVcc'],
     'Zee' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVLF','VVbb','VVcc'],
     'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','VVcc','QCD'],
@@ -343,6 +344,51 @@ if args.rebinning_scheme == 'LF-rebin': # all channels: 1bin in TT/LF, 2bins in 
   print 'binning in CR for LF fitting variable:',binning,'for Znn channelrs'
   cb.cp().channel(['Znn']).bin_id([3]).VariableRebin(binning)
 
+if args.rebinning_scheme == 'LF1b_v0': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([3,4]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([3]).VariableRebin(binning)
+
+
+if args.rebinning_scheme == 'LF1b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([3,4]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([3]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF,CC CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([5,6,9,10]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF,CC CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([5,9]).VariableRebin(binning)
+  
+if args.rebinning_scheme == 'HF7b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF,CC CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([5,6,9,10]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF,CC CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([5,9]).VariableRebin(binning)
+
+if args.rebinning_scheme == 'CC1b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([5,6]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in HF CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([5]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=3)
+  print 'binning in CC CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([9,10]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=3)
+  print 'binning in CC CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([9]).VariableRebin(binning)
+  
 
 cb.FilterProcs(lambda x: drop_zero_procs(cb,x))
 cb.FilterSysts(lambda x: drop_zero_systs(x))

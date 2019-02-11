@@ -38,7 +38,7 @@ parser.add_argument('--ratio_range',  help='y-axis range for ratio plot in forma
 parser.add_argument('--no_signal', action='store_true',help='Do not draw signal')
 parser.add_argument('--x_title', default='m(jj) [GeV]',help='Title for the x-axis. For bin labels give comma-separated string.')
 parser.add_argument('--y_title', default='S/(S+B) weighted entries',help='Title for the y-axis')
-parser.add_argument('--lumi', default='77.2 fb^{-1} (13 TeV)',help='Lumi label')
+parser.add_argument('--lumi', default='35.9 fb^{-1} (13 TeV)',help='Lumi label')
 parser.add_argument('--cr', default=False, action='store_true', help='Plot CRs? (Important for QCD in 0-lep')
 parser.add_argument('--weights', default="", help='weights')
 parser.add_argument('--verbosity','-v', default=0, help='verbosity level (default 0)')
