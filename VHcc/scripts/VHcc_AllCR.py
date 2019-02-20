@@ -83,7 +83,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
  '--channel', default='all', help="""Which channels to run? Supported options: 'all', 'Zee', 'Zmm', 'Zll', 'Wen', 'Wmn','Wln'""")
 parser.add_argument(
- '--output_folder', default='vhcc2017', help="""Subdirectory of ./output/ where the cards are written out to""")
+ '--output_folder', default='vhcc', help="""Subdirectory of ./output/ where the cards are written out to""")
 parser.add_argument(
  '--auto_rebin', action='store_true', help="""Rebin automatically?""")
 parser.add_argument(
@@ -103,7 +103,7 @@ parser.add_argument(
 parser.add_argument(
  '--Znn_fwk', default='AT', help="""Framework the Znn inputs were produced with. Supported options: 'Xbb', 'AT'""")
 parser.add_argument(
- '--year', default='2017', help="""Year to produce datacards for (2017 or 2016)""")
+ '--year', default='2016', help="""Year to produce datacards for (2017 or 2016)""")
 parser.add_argument(
  '--extra_folder', default='', help="""Additional folder where cards are""")
 parser.add_argument(
