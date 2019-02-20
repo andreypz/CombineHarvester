@@ -388,6 +388,11 @@ if args.rebinning_scheme == 'CC1b': # rebinning for H-analysis
   binning=np.linspace(0.0,0.9,num=3)
   print 'binning in CC CRs:',binning,'for Wln,Znn channels'
   cb.cp().channel(['Wen','Wmn','Znn']).bin_id([9]).VariableRebin(binning)
+
+if args.rebinning_scheme == 'HFZnn1b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.9,num=2)
+  print 'binning in HF CRs:',binning,'for Znn channels'
+  cb.cp().channel(['Znn']).bin_id([5]).VariableRebin(binning)
   
 
 cb.FilterProcs(lambda x: drop_zero_procs(cb,x))
