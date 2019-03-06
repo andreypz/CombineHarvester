@@ -58,8 +58,8 @@ CHN_DICT_SR = {
 
 for MODE in ['prefit','postfit']:
 #for MODE in ['prefit']:
-    for CHN in ['Zee','Zmm','Wen','Wmn','Znn']:
-    #for CHN in ['Wmn','Wen']:
+    #for CHN in ['Zee','Zmm','Wen','Wmn','Znn']:
+    for CHN in ['Wen']:
     #for CHN in ['Znn']:
         for i in range(0,len(CHN_DICT_SR[CHN])):
               LABEL = "%s" % CHN_DICT_SR[CHN][i][1]
@@ -67,7 +67,7 @@ for MODE in ['prefit','postfit']:
               XLOW = CHN_DICT_SR[CHN][i][2]
               XHIGH = CHN_DICT_SR[CHN][i][3]
               os.system(('./scripts/postFitPlot_vhcc.py' \
-                  ' --file=shapes_10Feb_stable.root --ratio --extra_pad=0.53 --file_dir=%(OUTNAME)s --no_signal ' \
+                  ' --file=shapes_VZ_16Feb.root --ratio --extra_pad=0.53 --file_dir=%(OUTNAME)s --no_signal' \
                   ' --ratio_range 0.4,1.6 --empty_bin_error --channel=%(CHN)s --cr ' \
                   ' --outname %(OUTNAME)s --mode %(MODE)s --x_title="c-Tagger_{min}" --lumi="35.9 fb^{-1} (13 TeV)" '\
                   ' --x_axis_min %(XLOW)f --x_axis_max %(XHIGH)f --custom_x_range '\

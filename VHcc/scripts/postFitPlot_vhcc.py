@@ -44,6 +44,8 @@ parser.add_argument('--weights', default="", help='weights')
 parser.add_argument('--verbosity','-v', default=0, help='verbosity level (default 0)')
 parser.add_argument('--subbkg',         default=0, help='subtract backgrounds (default 0)')
 parser.add_argument('--extralabel',     default='', help='Extra label next to CMS')
+parser.add_argument('--doVV',    default=False, help='Set True for the VZ analysis')
+
 args = parser.parse_args()
 
 
@@ -188,90 +190,183 @@ shape_file_name=args.file
 histo_file = ROOT.TFile(shape_file_name)
 
 #Store plotting information for different backgrounds 
-background_schemes = {
-'Wen':[backgroundComp("Single top",["s_Top"],623),
-       backgroundComp("t#bar{t}",["TT"],633),
-       backgroundComp("Z+udscg",["Zj_ll"],821),
-       backgroundComp("Z+bl/cl",["Zj_blc"],830),
-       backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-       backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-       backgroundComp("W+udscg",["Wj_ll"],800),
-       backgroundComp("W+bl/cl",["Wj_blc"],801),
-       backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
-       backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-       backgroundComp("VV+LF",["VVLF"], 866),
-       backgroundComp("VV+bb",["VVbb"],867),
-       backgroundComp("VV+bb",["VVcc"],859),
-       backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-       backgroundComp("WHb#bar{b}",["WH_hbb"],880)
-       ],
 
-'Wmn':[backgroundComp("Single top",["s_Top"],623),
-       backgroundComp("t#bar{t}",["TT"],633),
-       backgroundComp("Z+udscg",["Zj_ll"],821),
-       backgroundComp("Z+bl/cl",["Zj_blc"],830),
-       backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-       backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-       backgroundComp("W+udscg",["Wj_ll"],800),
-       backgroundComp("W+bl/cl",["Wj_blc"],801),
-       backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
-       backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-       backgroundComp("VV+LF",["VVLF"], 866),
-       backgroundComp("VV+bb",["VVbb"],867),
-       backgroundComp("VV+bb",["VVcc"],859),
-       backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-       backgroundComp("WHb#bar{b}",["WH_hbb"],880)
-       ],
+background_schemes = {}
+if not args.doVV :
+  background_schemes = {
+    'Wen':[backgroundComp("Single top",["s_Top"],623),
+         backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880)
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
+           ],
+    
+    'Wmn':[backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880)
+           ],
 
-'Zee':[backgroundComp("Single top",["s_Top"],623),
-       backgroundComp("t#bar{t}",["TT"],633),
-       backgroundComp("Z+udscg",["Zj_ll"],821),
-       backgroundComp("Z+bl/cl",["Zj_blc"],830),
-       backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-       backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-       backgroundComp("VV+LF",["VVLF"],866),
-       backgroundComp("VV+bb",["VVbb"],867),
-       backgroundComp("VV+cc",["VVcc"],859),
-       backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-       backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
-       ],
+    'Zee':[backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("VV+LF",["VVLF"],866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
+           ],
 
-'Zmm':[backgroundComp("Single top",["s_Top"],623),
-       backgroundComp("t#bar{t}",["TT"],633),
-       backgroundComp("Z+udscg",["Zj_ll"],821),
-       backgroundComp("Z+bl/cl",["Zj_blc"],830),
-       backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-       backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-       backgroundComp("VV+LF",["VVLF"],866),
-       backgroundComp("VV+bb",["VVbb"],867),
-       backgroundComp("VV+cc",["VVcc"],859),
-       backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-       backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
-       ],#,backgroundComp("ZHc#bar{c}",["ZH_hcc"],633),backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],801)],
+    'Zmm':[backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("VV+LF",["VVLF"],866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
+           ],#,backgroundComp("ZHc#bar{c}",["ZH_hcc"],633),backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],801)],
 
-'Znn':[backgroundComp("Single top",["s_Top"],623),
-       backgroundComp("t#bar{t}",["TT"],633),
-       backgroundComp("W+udscg",["Wj_ll"],800),
-       backgroundComp("W+bl/cl",["Wj_blc"],801),
-       backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
-       backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-       backgroundComp("Z+udscg",["Zj_ll"],821),
-       backgroundComp("Z+bl/cl",["Zj_blc"],830),
-       backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-       backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-       backgroundComp("VV+LF",["VVLF"], 866),
-       backgroundComp("VV+bb",["VVbb"],867),
-       backgroundComp("VV+cc",["VVcc"],859),
-       backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-       backgroundComp("WHb#bar{b}",["WH_hbb"],880),
-       backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
-    ]#,backgroundComp("QCD",["QCD"],613)]
-}
-#'Znn':[backgroundComp("Z+udscg",["Zj0b"],402),backgroundComp("Z+b",["Zj1b"],397),backgroundComp("Z+b#bar{b}",["Zj2b"],5),backgroundComp("W+udscg",["Wj0b"],814),backgroundComp("W+b",["Wj1b"],815),backgroundComp("W+b#bar{b}",["Wj2b"],81),backgroundComp("Single top",["s_Top"],862),backgroundComp("t#bar{t}",["TT"],4),backgroundComp("VV+LF",["VVLF"], 13),backgroundComp("VV+HF",["VVHF"],17),backgroundComp("ZHb#bar{b}",["ZH_hbb"],2),backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],625),backgroundComp("WHb#bar{b}",["WH_hbb"],634),backgroundComp("QCD",["QCD"],613)]}
+    'Znn':[backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
+           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
+           ]#,backgroundComp("QCD",["QCD"],613)]
+    }
 
-#if args.cr:
-#  background_schemes['Znn']=[backgroundComp("Single top",["s_Top"],623),backgroundComp("VV+LF",["VVLF"], 866),backgroundComp("t#bar{t}",["TT"],633),backgroundComp("Z+udscg",["Zj_ll"],821),backgroundComp("Z+bl/cl",["Zj_blc"],830),backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),backgroundComp("Z+c#bar{c}",["Zj_cc"],824),backgroundComp("W+udscg",["Wj_ll"],800),backgroundComp("W+blc",["Wj_blc"],801),backgroundComp("W+b#bar{b}",["Wj_bbc"],802),backgroundComp("W+c#bar{c}",["Wj_cc"],803),backgroundComp("VV+bb",["VVbb"],867),backgroundComp("VV+cc",["VVcc"],859),backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),backgroundComp("WHb#bar{b}",["WH_hbb"],880),backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)]#,backgroundComp("QCD",["QCD"],613)]
-#  background_schemes['Znn']=[backgroundComp("Single top",["s_Top"],862),backgroundComp("VV+LF",["VVLF"], 13),backgroundComp("VV+HF",["VVHF"],17),backgroundComp("t#bar{t}",["TT"],4),backgroundComp("Z+udscg",["Zj0b"],402),backgroundComp("Z+b",["Zj1b"],397),backgroundComp("Z+b#bar{b}",["Zj2b"],5),backgroundComp("W+udscg",["Wj0b"],814),backgroundComp("W+b",["Wj1b"],815),backgroundComp("W+b#bar{b}",["Wj2b"],81),backgroundComp("QCD",["QCD"],613),backgroundComp("ZHb#bar{b}",["ZH_hbb"],2),backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],625),backgroundComp("WHb#bar{b}",["WH_hbb"],634)]
+if args.doVV :
+  background_schemes = {
+    'Wen':[backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
+           ],
+
+    'Wmn':[backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
+           ],
+
+    'Zee':[backgroundComp("VV+LF",["VVLF"],866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           ],
+
+    'Zmm':[backgroundComp("VV+LF",["VVLF"],866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           ],
+
+    'Znn':[backgroundComp("VV+LF",["VVLF"], 866),
+           backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("Single top",["s_Top"],623),
+           backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("W+udscg",["Wj_ll"],800),
+           backgroundComp("W+bl/cl",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+c#bar{c}",["Wj_cc"],803),
+           backgroundComp("Z+udscg",["Zj_ll"],821),
+           backgroundComp("Z+bl/cl",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
+           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
+           #backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
+           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
+           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           ]#,backgroundComp("QCD",["QCD"],613)]
+    }
+
+
 #To be filled later depending on which histograms actually exist
 plot_background_schemes = {'Wen':[],'Wmn':[],'Zee':[],'Zmm':[],'Znn':[]}
 
@@ -283,7 +378,7 @@ bkghist = getHistogram(histo_file,'TotalBkg',file_dir, mode, logx=log_x)[0]
 splusbhist = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
 if args.subbkg!=0:
   splusbhist_total = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
-  vvhist = getHistogram(histo_file,'VVHF',file_dir, mode, logx=log_x)[0]
+  vvhist = getHistogram(histo_file,'VVcc',file_dir, mode, logx=log_x)[0]
 
 if args.verbosity>1:
   print "grabbing data histogram"
@@ -544,7 +639,10 @@ if args.subbkg==0:
 if not args.no_signal:
   legend.AddEntry(splusbhist,"S+B uncertainty","f")
   if args.subbkg==0:
-    legend.AddEntry(sighist,"VH,H#rightarrowc#bar{c}","l")
+    if not args.doVV:
+      legend.AddEntry(sighist,"VH,H#rightarrowc#bar{c}","l")
+    if args.doVV:
+      legend.AddEntry(sighist,"VZ,Z#rightarrowc#bar{c}","l")
   else:
     legend.AddEntry(sighist,"VH,H#rightarrowc#bar{c}","f")
   if args.subbkg!=0:
