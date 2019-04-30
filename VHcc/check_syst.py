@@ -18,21 +18,31 @@ print opt
 
 procs = ['ZH_hcc','WH_hcc','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc']
 #procs = ['ZH_hcc','ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVLF','VVbb','VVcc']
-#procs = ['Wj_ll']
+#procs = ['ZH_hcc']
 categ = ['high_Zmm', 'high_Zee', 'low_Zmm', 'low_Zee', 'Wmunu', 'Wenu', 'Znn']
-#categ = ['Wmunu', 'Wenu']
+#categ = ['high_Zmm']
 
 systs = ['CMS_scale_j_13TeV_2016', 'CMS_res_j_13TeV_2016', 'CMS_vhcc_puWeight_2016', 
-         'CMS_LHE_weights_scale_muF_Wj_ll', 'CMS_LHE_weights_scale_muF_Wj_blc',
-         'CMS_cTagWeight_PU']
-#systs = ['CMS_scale_j_13TeV_2016']
-#systs = ['CMS_vhcc_puWeight_2016']
+         #         'CMS_LHE_weights_scale_muF_Wj_ll', 'CMS_LHE_weights_scale_muF_Wj_blc',
+         'CMS_Lep_SF']
+systs = ['CMS_scale_j_RelativePtBB_13TeV_2016', 'CMS_scale_j_RelativePtEC2_13TeV_2016', 'CMS_scale_j_PileUpDataMC_13TeV_2016',
+         'CMS_scale_j_RelativeJERHF_13TeV_2016', 'CMS_scale_j_RelativeJEREC1_13TeV_2016',
+         'CMS_scale_j_13TeV_2016','CMS_res_j_13TeV_2016',
+         'CMS_vhcc_puWeight_2016',
+         'CMS_cTagWeight_PU', 'CMS_cTagWeight_EleId', 'CMS_cTagWeight_MuId', 'CMS_cTagWeight_JES', 'CMS_cTagWeight_JER', 
+         'CMS_cTagWeight_muR', 'CMS_cTagWeight_muF', 'CMS_cTagWeight_MCStat', 'CMS_cTagWeight_DataStat',
+         'CMS_vhcc_vjetnlodetajjrw_13TeV_2016']
+
+#systs = ['CMS_scale_j_13TeV_2016','CMS_scale_j_RelativePtBB_13TeV_2016']
+#systs = ['CMS_cTagWeight_muF', 'CMS_cTagWeight_PU', 'CMS_cTagWeight_JES', 'CMS_vhcc_vjetnlodetajjrw_13TeV_2016']
+#systs = ['CMS_cTagWeight_JES', 'CMS_vhcc_vjetnlodetajjrw_13TeV_2016']
 
 CtoC = {'high_Zmm':'Zmm', 'high_Zee':'Zee', 'low_Zmm':'Zmm', 'low_Zee':'Zee', 'Wmunu':'Wmn', 'Wenu':'Wen', 'Znn':'Znn'}
-regions = ['SR','ttbar',
+regions = ['VZ_SR', 'VH_SR', 'ttbar',
            'Zcc', 'Wcc', 'Vcc',
            'Zlf', 'Wlf', 'Vlf',
-           'Zhf', 'Whf', 'Vhf' ]
+           'Zhf', 'Whf', 'Vhf',
+           'all']
         
 diffUp_vals = {}
 diffDw_vals = {}
@@ -54,26 +64,31 @@ def createDir(myDir):
 
 
 for s in systs:
-    hDiffUp[s] = TH1F('hDiffUp_'+s,'Nominal-Up difference for '+s, 100, -0.15, 0.15)
-    hDiffDw[s] = TH1F('hDiffDw_'+s,'Nominal-Down difference for '+s, 100, -0.15, 0.15)
-    hDiffUD[s] = TH1F('hDiffUD_'+s,'Up-Down difference for '+s, 100, -0.15, 0.15)
+    hDiffUp[s] = {}
+    hDiffDw[s] = {}
+    hDiffUD[s] = {}
     hBits[s] = {}
     for r in regions:
-        hBits[s][r] = TH1F('hBits_'+s+'/'+r,'++/+-/-+/-- for '+s+' in '+r, 4, 0, 4)
+        hDiffUp[s][r] = TH1F('hDiffUp_'+s+'_'+r,'Nominal-Up difference for '+s, 100, -0.15, 0.15)
+        hDiffDw[s][r] = TH1F('hDiffDw_'+s+'_'+r,'Nominal-Down difference for '+s, 100, -0.15, 0.15)
+        hDiffUD[s][r] = TH1F('hDiffUD_'+s+'_'+r,'Up-Down difference for '+s, 100, -0.15, 0.15)
+        hBits[s][r] = TH1F('hBits_'+s+'_'+r,'++/+-/-+/-- for '+s+' in '+r, 4, 0, 4)
 
 for s in systs:
     for r in regions:
-        createDir(opt.outDir+'/'+s+'/'+r)
+        if r!='all':
+            createDir(opt.outDir+'/'+s+'/'+r)
 
 
 for c in categ:
     print "Open the corresponding root file for this category:", c
     fName = 'vhcc_'+CtoC[c]+'-2016.root'
     print fName
-    f = TFile(opt.inPath+'/'+fName)
+    f = TFile(opt.inPath+'/'+fName, 'read')
     f.ls()
 
     for r in regions:
+        if r=='all': continue
         for p in procs:
             for s in systs:
                 hName0 = "_".join(['BDT', r, c, p])
@@ -110,8 +125,8 @@ for c in categ:
                 # Now let's have a look at them
                 # First set maximums for plotting 
                 hmax = max([h00.GetMaximum(), hUp.GetMaximum(), hDw.GetMaximum()])
-                # if 'puWe' in s:
-                #     print "HMAX", hmax, [h00.GetMaximum(), hUp.GetMaximum(), hDw.GetMaximum()]
+                #if 'vjetnlodetajjrw' in s:
+                #    print "HMAX", hmax, [h00.GetMaximum(), hUp.GetMaximum(), hDw.GetMaximum()]
 
                 h00.SetMaximum(hmax*1.4)
 
@@ -121,7 +136,7 @@ for c in categ:
                 h00.Draw()
                 hUp.Draw('same')
                 hDw.Draw('same')
-                if r == "SR":
+                if r in ["VZ_SR", "VH_SR"]:
                     xname = "BDT score"
                 else:
                     xname = "C-tagger score"
@@ -140,17 +155,23 @@ for c in categ:
                 diffUp_vals[r,c,p,s], diffDw_vals[r,c,p,s], diffUD_vals[r,c,p,s] = -1, -1, -1
                 diffUp_vals[r,c,p,s], diffDw_vals[r,c,p,s] = intDiffUp, intDiffDw
 
-                hDiffUp[s].Fill(intDiffUp)
-                hDiffDw[s].Fill(intDiffDw)
+                hDiffUp[s][r].Fill(intDiffUp)
+                hDiffDw[s][r].Fill(intDiffDw)
+                hDiffUp[s]["all"].Fill(intDiffUp)
+                hDiffDw[s]["all"].Fill(intDiffDw)
 
                 if intDiffUp>=0 and intDiffDw>=0:
                     hBits[s][r].Fill(0)
+                    hBits[s]['all'].Fill(0)
                 elif intDiffUp>=0 and intDiffDw<0:
                     hBits[s][r].Fill(1)
+                    hBits[s]['all'].Fill(0)
                 elif intDiffUp<0 and intDiffDw>=0:
                     hBits[s][r].Fill(2)
+                    hBits[s]['all'].Fill(0)
                 elif intDiffUp<0 and intDiffDw<0:
                     hBits[s][r].Fill(3)
+                    hBits[s]['all'].Fill(0)
 
                 # Do Up - Down histogram
                 hDiff = hUp.Clone()
@@ -158,8 +179,10 @@ for c in categ:
                 # hDiff.Print()
                 if h00.Integral() != 0:
                     diffUD_vals[r,c,p,s] = hDiff.Integral()/h00.Integral()
-                    hDiffUD[s].Fill(diffUD_vals[r,c,p,s])
+                    hDiffUD[s][r].Fill(diffUD_vals[r,c,p,s])
+                    hDiffUD[s]["all"].Fill(diffUD_vals[r,c,p,s])
         
+                h00.Delete()
 
 """
 for i,n in enumerate([diffUp_vals, diffDw_vals, diffUD_vals]):
@@ -172,27 +195,28 @@ for i,n in enumerate([diffUp_vals, diffDw_vals, diffUD_vals]):
 """
 
 for s in systs:
-    hDiffUp[s].Draw()
-    hDiffUp[s].SetLineWidth(2)
-    hDiffUp[s].SetLineColor(kBlue+1)
-    hDiffUp[s].SetXTitle("Integral difference wrt Nominal")
-
-    hDiffDw[s].Draw("same")
-    hDiffDw[s].SetLineWidth(2)
-    hDiffDw[s].SetLineColor(kRed+2)
-
-    hDiffUp[s].SetMaximum(1.3*max([hDiffUp[s].GetMaximum(), hDiffDw[s].GetMaximum()]))
-    leg = TLegend(0.33,0.78,0.99,0.91)
-    leg.AddEntry(hDiffUp[s], "1 - Integral(Up)/Integral(Nominal)", 'l')
-    leg.AddEntry(hDiffDw[s], "1 - Integral(Down)/Integral(Nominal)", 'l')
-    leg.SetMargin(0.1)
-    leg.Draw()
-    c1.SaveAs(opt.outDir+"/"+s+"/fig_"+s+"_Diff.png")
-    
-    hDiffUD[s].Draw()
-    hDiffUD[s].SetXTitle("(Integral(Up) - Integral(Down))/Integral(Nominal)")
-    c1.SaveAs(opt.outDir+"/"+s+"/fig_"+s+"_DiffUD.png")
-
     for r in regions:
+        hDiffUp[s][r].Draw()
+        hDiffUp[s][r].SetLineWidth(2)
+        hDiffUp[s][r].SetLineColor(kBlue+1)
+        hDiffUp[s][r].SetXTitle("Integral difference wrt Nominal")
+        
+        hDiffDw[s][r].Draw("same")
+        hDiffDw[s][r].SetLineWidth(2)
+        hDiffDw[s][r].SetLineColor(kRed+2)
+        
+        hDiffUp[s][r].SetMaximum(1.3*max([hDiffUp[s][r].GetMaximum(), hDiffDw[s][r].GetMaximum()]))
+        leg = TLegend(0.33,0.78,0.99,0.91)
+        leg.AddEntry(hDiffUp[s][r], "1 - Integral(Up)/Integral(Nominal)", 'l')
+        leg.AddEntry(hDiffDw[s][r], "1 - Integral(Down)/Integral(Nominal)", 'l')
+        leg.SetMargin(0.1)
+        leg.Draw()
+        c1.SaveAs(opt.outDir+"/"+s+"/fig_"+s+"_Diff_"+r+".png")
+
+        hDiffUD[s][r].Draw()
+        hDiffUD[s][r].SetXTitle("(Integral(Up) - Integral(Down))/Integral(Nominal)")
+        c1.SaveAs(opt.outDir+"/"+s+"/fig_"+s+"_DiffUD_"+r+".png")
+
+
         hBits[s][r].Draw()
         c1.SaveAs(opt.outDir+"/"+s+"/fig_"+s+"_Bits_"+r+".png")
