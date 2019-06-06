@@ -195,6 +195,11 @@ def AddSystematics2016(cb, splitJEC=False):
      'SF_Zj_cc_Znn_2016', 'rateParam', ch.SystMap('bin_id')
      ([1,3,5,7,9],1.0))
 
+#Luca  # Zj_cc Znn
+#Luca   cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_cc']).AddSyst(cb,
+#Luca       'SF_Zj_cc_2016', 'rateParam', ch.SystMap('bin_id')
+#Luca       ([1,3,5,7,9],1.0))
+
 
   # TT Wln
   cb.cp().channel(['Wen','Wmn']).process(['TT']).AddSyst(cb,
@@ -230,6 +235,12 @@ def AddSystematics2016(cb, splitJEC=False):
 #%%%%%%%%%%%%%%%%% EXPERIMENTAL UNCERTAINTIES
 
   cb.cp().AddSyst( cb,'lumi_13TeV_2016','lnN', ch.SystMap()(1.025))
+  #take into account difference in V+Jets pt regimes:
+  #cb.cp().channel(['Zee','Zmm']).process(['Zj_ll','Zj_blc','Zj_bbc','Zj_cc']).AddSyst(cb,'lowZllVpt', 'lnN', ch.SystMap('bin_id')([2,4,6,8,10],1.15))
+  
+  #take into account possible mismodelling in heavy flavour hadronization
+  #cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_bbc','Zj_cc']).AddSyst(cb,'heavyFlavHadFrac_mismodelling_Zjets', 'lnN', ch.SystMap('bin_id')([1,2,3,4,5,6,7,8,9,10],1.15))
+  #cb.cp().channel(['Wen','Wmn']).process(['Wj_bbc','Wj_cc']).AddSyst(cb,'heavyFlavHadFrac_mismodelling_Wjets', 'lnN', ch.SystMap('bin_id')([1,3,5,7,9],1.15))
 
 #  cb.cp().AddSyst( cb,'tagger_13TeV_2016','lnN', ch.SystMap()(2.0))
   
@@ -270,8 +281,11 @@ def AddSystematics2016(cb, splitJEC=False):
   cb.cp().channel(['Znn']).AddSyst(cb,'CMS_vhcc_trigger_MET_13TeV_2016','lnN',ch.SystMap()(1.02))
 
 #=============  VpT reweightings
-  cb.cp().process(['TT']).AddSyst(cb,'CMS_vhcc_topptreweighting_13TeV_2016','shape',ch.SystMap()(1.0))
+  cb.cp().process(['TT']).AddSyst(cb,'CMS_vhcc_topptreweighting_13TeV_2016','shape',ch.SystMap()(1.0)) 
   cb.cp().channel(['Wen','Wmn']).process(['Wj_ll','Wj_blc','Wj_bbc','Wj_cc','s_Top']).AddSyst(cb,'CMS_vhcc_ptwweights_13TeV_2016','shape',ch.SystMap()(1.0))
+  cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_ll','Zj_blc','Zj_bbc','Zj_cc']).AddSyst(cb,'CMS_vhcc_ptzweights_13TeV_2016','shape',ch.SystMap()(1.0))
+  cb.cp().channel(['Zee','Zmm']).process(['s_Top']).AddSyst(cb,'CMS_vhcc_ptzweights_13TeV_2016','shape',ch.SystMap()(1.0))
+
   
   #Luca cb.cp().channel(['Wen','Wmn']).process(['Wj_ll']).AddSyst(cb,'CMS_vhcc_ptwweights_13TeV_2016','shape',ch.SystMap()(1.0))
 
@@ -314,8 +328,8 @@ def AddSystematics2016(cb, splitJEC=False):
     cb.cp().AddSyst(cb,'CMS_scale_j_Fragmentation_13TeV_2016','shape',ch.SystMap()(1.0))
     cb.cp().AddSyst(cb,'CMS_scale_j_FlavorQCD_13TeV_2016','shape',ch.SystMap()(1.0))
 
-    # Luca  #Need to filter the uncertainty for processes it doesn't make sense for:
-    # Luca  #cb.FilterSysts(lambda x: x.process()=='Zj1b' and x.bin_id()==7 and x.name()=='CMS_scale_j_FlavorQCD_13TeV')
+    #Need to filter the uncertainty for processes it doesn't make sense for:
+    #cb.FilterSysts(lambda x: x.process()=='Zj1b' and x.bin_id()==7 and x.name()=='CMS_scale_j_FlavorQCD_13TeV')
     
   else:
     cb.cp().AddSyst(cb,'CMS_scale_j_13TeV_2016','shape',ch.SystMap()(1.0))
@@ -328,13 +342,16 @@ def AddSystematics2016(cb, splitJEC=False):
 #============= tagger uncertainties
 # inclusive in pt/eta
   cb.cp().AddSyst(cb,'CMS_cTagWeight_PU','shape',ch.SystMap()(1.0))
-  cb.cp().AddSyst(cb,'CMS_cTagWeight_LepId','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_EleId','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_MuId','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_JES','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_JER','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_muR','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_muF','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_MCStat','shape',ch.SystMap()(1.0))
   cb.cp().AddSyst(cb,'CMS_cTagWeight_DataStat','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_FitUnc','shape',ch.SystMap()(1.0))
+  cb.cp().AddSyst(cb,'CMS_cTagWeight_XSecs','shape',ch.SystMap()(1.0))
 
 #Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_btag','shape',ch.SystMap()(1.0))
 #Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_PU','shape',ch.SystMap()(1.0))
@@ -346,8 +363,6 @@ def AddSystematics2016(cb, splitJEC=False):
 #Luca   cb.cp().AddSyst(cb,'CMS_cTagWeight_elecReco','shape',ch.SystMap()(1.0))
   
 # differential in pt/eta
-
-
 
 
 

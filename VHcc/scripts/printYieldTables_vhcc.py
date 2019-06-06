@@ -73,12 +73,12 @@ Process & \multicolumn{2}{c}{1-lepton(e)} & \multicolumn{2}{c|}{1-lepton($\mu$)}
     print r'Single top quark                              & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_wen.cp().process(['s_Top']).GetRate(), c_wen.cp().process(['s_Top']).GetUncertainty(*uargs),
         c_wmn.cp().process(['s_Top']).GetRate(), c_wmn.cp().process(['s_Top']).GetUncertainty(*uargs))
-    print r'VV(udsg)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_wen.cp().process(['VVLF']).GetRate(), c_wen.cp().process(['VVLF']).GetUncertainty(*uargs),
-        c_wmn.cp().process(['VVLF']).GetRate(), c_wmn.cp().process(['VVLF']).GetUncertainty(*uargs))
-    print r'VV(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_wen.cp().process(['VVbb']).GetRate(), c_wen.cp().process(['VVbb']).GetUncertainty(*uargs),
-        c_wmn.cp().process(['VVbb']).GetRate(), c_wmn.cp().process(['VVbb']).GetUncertainty(*uargs))
+    print r'VV(other)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+        c_wen.cp().process(['VVother']).GetRate(), c_wen.cp().process(['VVother']).GetUncertainty(*uargs),
+        c_wmn.cp().process(['VVother']).GetRate(), c_wmn.cp().process(['VVother']).GetUncertainty(*uargs))
+#    print r'VV(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+#        c_wen.cp().process(['VVbb']).GetRate(), c_wen.cp().process(['VVbb']).GetUncertainty(*uargs),
+#        c_wmn.cp().process(['VVbb']).GetRate(), c_wmn.cp().process(['VVbb']).GetUncertainty(*uargs))
     print r'VZ(cc)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_wen.cp().process(['VVcc']).GetRate(), c_wen.cp().process(['VVcc']).GetUncertainty(*uargs),
         c_wmn.cp().process(['VVcc']).GetRate(), c_wmn.cp().process(['VVcc']).GetUncertainty(*uargs))
@@ -119,12 +119,12 @@ Process & \multicolumn{2}{c}{Zee low \pT} & \multicolumn{2}{c|}{Zee high \pT} \\
     print r'Single top quark                              & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_zeelow.cp().process(['s_Top']).GetRate(), c_zeelow.cp().process(['s_Top']).GetUncertainty(*uargs),
         c_zeehi.cp().process(['s_Top']).GetRate(), c_zeehi.cp().process(['s_Top']).GetUncertainty(*uargs))
-    print r'VV(udsg)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_zeelow.cp().process(['VVLF']).GetRate(), c_zeelow.cp().process(['VVLF']).GetUncertainty(*uargs),
-        c_zeehi.cp().process(['VVLF']).GetRate(), c_zeehi.cp().process(['VVLF']).GetUncertainty(*uargs))
-    print r'VZ(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_zeelow.cp().process(['VVbb']).GetRate(), c_zeelow.cp().process(['VVbb']).GetUncertainty(*uargs),
-        c_zeehi.cp().process(['VVbb']).GetRate(), c_zeehi.cp().process(['VVbb']).GetUncertainty(*uargs))
+    print r'VV(other)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+        c_zeelow.cp().process(['VVother']).GetRate(), c_zeelow.cp().process(['VVother']).GetUncertainty(*uargs),
+        c_zeehi.cp().process(['VVother']).GetRate(), c_zeehi.cp().process(['VVother']).GetUncertainty(*uargs))
+ #   print r'VZ(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+ #       c_zeelow.cp().process(['VVbb']).GetRate(), c_zeelow.cp().process(['VVbb']).GetUncertainty(*uargs),
+ #       c_zeehi.cp().process(['VVbb']).GetRate(), c_zeehi.cp().process(['VVbb']).GetUncertainty(*uargs))
     print r'VZ(cc)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_zeelow.cp().process(['VVcc']).GetRate(), c_zeelow.cp().process(['VVcc']).GetUncertainty(*uargs),
         c_zeehi.cp().process(['VVcc']).GetRate(), c_zeehi.cp().process(['VVcc']).GetUncertainty(*uargs))
@@ -165,12 +165,12 @@ Process & \multicolumn{2}{c}{Z$\mu\mu$ low \pT} & \multicolumn{2}{c|}{Z$\mu\mu$ 
     print r'Single top quark                              & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_zmmlow.cp().process(['s_Top']).GetRate(), c_zmmlow.cp().process(['s_Top']).GetUncertainty(*uargs),
         c_zmmhi.cp().process(['s_Top']).GetRate(), c_zmmhi.cp().process(['s_Top']).GetUncertainty(*uargs))
-    print r'VV(udsg)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_zmmlow.cp().process(['VVLF']).GetRate(), c_zmmlow.cp().process(['VVLF']).GetUncertainty(*uargs),
-        c_zmmhi.cp().process(['VVLF']).GetRate(), c_zmmhi.cp().process(['VVLF']).GetUncertainty(*uargs))
-    print r'VZ(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
-        c_zmmlow.cp().process(['VVbb']).GetRate(), c_zmmlow.cp().process(['VVbb']).GetUncertainty(*uargs),
-        c_zmmhi.cp().process(['VVbb']).GetRate(), c_zmmhi.cp().process(['VVbb']).GetUncertainty(*uargs))
+    print r'VV(other)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+        c_zmmlow.cp().process(['VVother']).GetRate(), c_zmmlow.cp().process(['VVother']).GetUncertainty(*uargs),
+        c_zmmhi.cp().process(['VVother']).GetRate(), c_zmmhi.cp().process(['VVother']).GetUncertainty(*uargs))
+#    print r'VZ(bb)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
+#        c_zmmlow.cp().process(['VVbb']).GetRate(), c_zmmlow.cp().process(['VVbb']).GetUncertainty(*uargs),
+#        c_zmmhi.cp().process(['VVbb']).GetRate(), c_zmmhi.cp().process(['VVbb']).GetUncertainty(*uargs))
     print r'VZ(cc)                                      & $%.2f$ & $%.2f$ & $%.2f$ & $%.2f$ \\' % (
         c_zmmlow.cp().process(['VVcc']).GetRate(), c_zmmlow.cp().process(['VVcc']).GetUncertainty(*uargs),
         c_zmmhi.cp().process(['VVcc']).GetRate(), c_zmmhi.cp().process(['VVcc']).GetUncertainty(*uargs))
@@ -215,10 +215,10 @@ Process & \multicolumn{2}{c}{Z$\nu\nu$} \\
         c_znn.cp().process(['QCD']).GetRate(), c_znn.cp().process(['QCD']).GetUncertainty(*uargs))
     print r'Single top quark                              & $%.2f$ & $%.2f$  \\' % (
         c_znn.cp().process(['s_Top']).GetRate(), c_znn.cp().process(['s_Top']).GetUncertainty(*uargs))
-    print r'VV(udsg)                                      & $%.2f$ & $%.2f$ \\' % (
-        c_znn.cp().process(['VVLF']).GetRate(), c_znn.cp().process(['VVLF']).GetUncertainty(*uargs))
-    print r'VZ(bb)                                      & $%.2f$ & $%.2f$ \\' % (
-        c_znn.cp().process(['VVbb']).GetRate(), c_znn.cp().process(['VVbb']).GetUncertainty(*uargs))
+    print r'VV(other)                                      & $%.2f$ & $%.2f$ \\' % (
+        c_znn.cp().process(['VVother']).GetRate(), c_znn.cp().process(['VVother']).GetUncertainty(*uargs))
+#    print r'VZ(bb)                                      & $%.2f$ & $%.2f$ \\' % (
+#        c_znn.cp().process(['VVbb']).GetRate(), c_znn.cp().process(['VVbb']).GetUncertainty(*uargs))
     print r'VZ(cc)                                      & $%.2f$ & $%.2f$ \\' % (
         c_znn.cp().process(['VVcc']).GetRate(), c_znn.cp().process(['VVcc']).GetUncertainty(*uargs))
     print r'\hline'

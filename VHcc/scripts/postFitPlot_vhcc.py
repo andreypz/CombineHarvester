@@ -195,7 +195,7 @@ background_schemes = {}
 if not args.doVV :
   background_schemes = {
     'Wen':[backgroundComp("Single top",["s_Top"],623),
-         backgroundComp("t#bar{t}",["TT"],633),
+           backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("Z+udscg",["Zj_ll"],821),
            backgroundComp("Z+bl/cl",["Zj_blc"],830),
            backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
@@ -204,9 +204,9 @@ if not args.doVV :
            backgroundComp("W+bl/cl",["Wj_blc"],801),
            backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
            backgroundComp("WHb#bar{b}",["WH_hbb"],880)
            #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
@@ -223,9 +223,9 @@ if not args.doVV :
            backgroundComp("W+bl/cl",["Wj_blc"],801),
            backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
            backgroundComp("WHb#bar{b}",["WH_hbb"],880)
            ],
@@ -236,9 +236,9 @@ if not args.doVV :
            backgroundComp("Z+bl/cl",["Zj_blc"],830),
            backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+LF",["VVLF"],866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("VV+other",["VVother"],866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
            backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
            ],
@@ -249,14 +249,15 @@ if not args.doVV :
            backgroundComp("Z+bl/cl",["Zj_blc"],830),
            backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+LF",["VVLF"],866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("VV+other",["VVother"],866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
            backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
            ],#,backgroundComp("ZHc#bar{c}",["ZH_hcc"],633),backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],801)],
 
-    'Znn':[backgroundComp("Single top",["s_Top"],623),
+    'Znn':[backgroundComp("QCD",["QCD"],613),
+           backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("W+udscg",["Wj_ll"],800),
            backgroundComp("W+bl/cl",["Wj_blc"],801),
@@ -266,20 +267,20 @@ if not args.doVV :
            backgroundComp("Z+bl/cl",["Zj_blc"],830),
            backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+           backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
            backgroundComp("WHb#bar{b}",["WH_hbb"],880),
            backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
-           ]#,backgroundComp("QCD",["QCD"],613)]
+           ]
     }
 
 if args.doVV :
   background_schemes = {
-    'Wen':[backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+    'Wen':[backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("Z+udscg",["Zj_ll"],821),
@@ -296,9 +297,9 @@ if args.doVV :
            #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
            ],
 
-    'Wmn':[backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+    'Wmn':[backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("Z+udscg",["Zj_ll"],821),
@@ -315,9 +316,9 @@ if args.doVV :
            #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
            ],
 
-    'Zee':[backgroundComp("VV+LF",["VVLF"],866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+    'Zee':[backgroundComp("VV+other",["VVother"],866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("Z+udscg",["Zj_ll"],821),
@@ -330,9 +331,9 @@ if args.doVV :
            #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
            ],
 
-    'Zmm':[backgroundComp("VV+LF",["VVLF"],866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+    'Zmm':[backgroundComp("VV+other",["VVother"],866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
            backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("Z+udscg",["Zj_ll"],821),
@@ -345,9 +346,10 @@ if args.doVV :
            #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
            ],
 
-    'Znn':[backgroundComp("VV+LF",["VVLF"], 866),
-           backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VV+cc",["VVcc"],859),
+    'Znn':[backgroundComp("VV+other",["VVother"], 866),
+           #backgroundComp("VV+bb",["VVbb"],867),
+           backgroundComp("VZ+cc",["VVcc"],859),
+           backgroundComp("QCD",["QCD"],613),
            backgroundComp("Single top",["s_Top"],623),
            backgroundComp("t#bar{t}",["TT"],633),
            backgroundComp("W+udscg",["Wj_ll"],800),
@@ -363,7 +365,7 @@ if args.doVV :
            #backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
            #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
            #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
-           ]#,backgroundComp("QCD",["QCD"],613)]
+           ]
     }
 
 
@@ -624,10 +626,10 @@ if args.subbkg!=0:
   legend = plot.PositionedLegend(0.4,0.22,3,0.03)
   plot.Set(legend, NColumns=1)
 else:
-  legend = plot.PositionedLegend(0.47,0.30,3,0.03)
+  legend = plot.PositionedLegend(0.350,0.30,3,0.03)
   plot.Set(legend, NColumns=2)
 legend.SetTextFont(42)
-legend.SetTextSize(0.030)
+legend.SetTextSize(0.028)
 legend.SetFillColor(0)
 legend.AddEntry(total_datahist,"Data","PE")
 #Drawn on legend in reverse order looks better
@@ -746,4 +748,3 @@ else:
   outfile = ROOT.TFile("mjj_subtracted.root","UPDATE")
 c2.Write()
 outfile.Close()
-

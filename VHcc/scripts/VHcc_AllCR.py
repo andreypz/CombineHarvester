@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 import CombineHarvester.CombineTools.ch as ch
@@ -39,8 +38,9 @@ def drop_znnqcd(chob,proc):
 
 def matching_proc(p,s):
   return ((p.bin()==s.bin()) and (p.process()==s.process()) and (p.signal()==s.signal()) 
-         and (p.analysis()==s.analysis()) and  (p.era()==s.era()) 
-         and (p.channel()==s.channel()) and (p.bin_id()==s.bin_id()) and (p.mass()==s.mass()))
+          and (p.analysis()==s.analysis()) and  (p.era()==s.era()) 
+          and (p.channel()==s.channel()) and (p.bin_id()==s.bin_id()) and (p.mass()==s.mass()))
+
 
 def remove_norm_effect(syst):
   syst.set_value_u(1.0)
@@ -77,8 +77,36 @@ def decrease_bin_errors(proc):
     new_hist.SetBinError(i,new_hist.GetBinError(i)/2.0)
   proc.set_shape(new_hist,False)
 
-  
 
+def drop_noRealShape_systs(proc,syst):
+  diff_lim=0.00025
+  if syst.type()=='shape' : 
+    hist_u = syst.ShapeUAsTH1F()
+    hist_d = syst.ShapeDAsTH1F()
+    hist_nom = proc.ShapeAsTH1F()
+    hist_nom.Scale(1./hist_nom.Integral())
+    up_diff=0
+    down_diff=0
+    print "SYSTEMATICS = ",syst.name(),syst.process(),syst.bin()
+    for i in range(1,hist_u.GetNbinsX()+1):
+      if hist_nom.GetBinContent(i)!=0:
+        up_diff+=2*(abs(hist_u.GetBinContent(i)-hist_nom.GetBinContent(i)))/(abs(hist_u.GetBinContent(i))+abs(hist_nom.GetBinContent(i)))
+        down_diff+=2*(abs(hist_d.GetBinContent(i)-hist_nom.GetBinContent(i)))/(abs(hist_u.GetBinContent(i))+abs(hist_nom.GetBinContent(i)))
+      else:
+        up_diff+=0
+        down_diff+=0
+    null_yield = (up_diff<diff_lim and down_diff<diff_lim)
+    if(null_yield):
+      #print "Uncertainty has no real shape effect. Summed rel. diff. per bin between norm. nominal and up/down shape: ",up_diff, down_diff
+      print 'Dropping systematic ',syst.name(),' for region ', syst.bin(), ' ,process ', syst.process(), '. up int ', hist_u.Integral() , ' and down int is ', hist_d.Integral()
+    return null_yield  
+
+def PrintProc(proc):
+  print  proc.channel(), proc.bin_id(), proc.process()
+
+def PrintSyst(syst,proc):
+  print  syst.channel(), syst.bin_id(), syst.process(), syst.name(), proc.process()
+  
 parser = argparse.ArgumentParser()
 parser.add_argument(
  '--channel', default='all', help="""Which channels to run? Supported options: 'all', 'Zee', 'Zmm', 'Zll', 'Wen', 'Wmn','Wln'""")
@@ -110,6 +138,8 @@ parser.add_argument(
  '--rebinning_scheme', default='', help="""Rebinning scheme for CR and SR distributions""")
 parser.add_argument(
  '--doVV', default=False, help="""if True assume we are running the VZ(cc) analysis""")
+parser.add_argument(
+ '--vjetNLO', default=False, help="""if True assume we are running with V+jets NLO samples""")
 parser.add_argument(
  '--mjj',  default=True, help="""if True assume we are running the mjj analysis""")
 
@@ -219,7 +249,7 @@ else:
 if args.mjj:
 
     # don't fit QCD anywhere for Mjj!
-    bkg_procs['Znn'].remove('QCD')
+    #Luca bkg_procs['Znn'].remove('QCD')
 
     cats = {
       'Zee' : [
@@ -252,7 +282,8 @@ for chn in chns:
   cb.AddProcesses( ['*'], ['vhcc'], ['13TeV'], [chn], sig_procs[chn], cats[chn], True)
 
 # Filter QCD from processes in Znn
-cb.FilterProcs(lambda x: x.bin_id()==1 and x.channel()=='Znn' and x.process()=='QCD')
+cb.FilterProcs(lambda x: x.bin_id()==5 and x.channel()=='Znn' and x.process()=='QCD')
+cb.FilterProcs(lambda x: x.bin_id()==9 and x.channel()=='Znn' and x.process()=='QCD')
   
 systs.AddCommonSystematics(cb)
 if year=='2016':
@@ -271,10 +302,20 @@ elif args.bbb_mode==1:
 for chn in chns:
   file = shapes + input_folders[chn] + "/vhcc_"+chn+"-"+year+".root"
   if input_fwks[chn] == 'AT':
-    cb.cp().channel([chn]).backgrounds().ExtractShapes(
+    cb.cp().channel([chn]).backgrounds().bin_id([3,4,5,6,7,8,9,10]).ExtractShapes(
       file, 'BDT_$BIN_$PROCESS', 'BDT_$BIN_$PROCESS_$SYSTEMATIC')
-    cb.cp().channel([chn]).signals().ExtractShapes(
+    cb.cp().channel([chn]).signals().bin_id([3,4,5,6,7,8,9,10]).ExtractShapes(
       file, 'BDT_$BIN_$PROCESS', 'BDT_$BIN_$PROCESS_$SYSTEMATIC')
+    if not args.doVV:
+      cb.cp().channel([chn]).backgrounds().bin_id([1,2]).ExtractShapes(
+        file, 'BDT_VH_$BIN_$PROCESS', 'BDT_VH_$BIN_$PROCESS_$SYSTEMATIC')
+      cb.cp().channel([chn]).signals().bin_id([1,2]).ExtractShapes(
+        file, 'BDT_VH_$BIN_$PROCESS', 'BDT_VH_$BIN_$PROCESS_$SYSTEMATIC')
+    if args.doVV:
+      cb.cp().channel([chn]).backgrounds().bin_id([1,2]).ExtractShapes(
+        file, 'BDT_VZ_$BIN_$PROCESS', 'BDT_VZ_$BIN_$PROCESS_$SYSTEMATIC')
+      cb.cp().channel([chn]).signals().bin_id([1,2]).ExtractShapes(
+        file, 'BDT_VZ_$BIN_$PROCESS', 'BDT_VZ_$BIN_$PROCESS_$SYSTEMATIC')
 
 # play with rebinning (and/or cutting) of the shapes
 if args.rebinning_scheme == 'zll-rebin':
@@ -388,23 +429,53 @@ if args.rebinning_scheme == 'CC1b': # rebinning for H-analysis
   print 'binning in CC CRs:',binning,'for Wln,Znn channels'
   cb.cp().channel(['Wen','Wmn','Znn']).bin_id([9]).VariableRebin(binning)
 
-if args.rebinning_scheme == 'HFZnn1b': # rebinning for H-analysis
-  binning=np.linspace(0.0,0.9,num=2)
+if args.rebinning_scheme == 'HFZnn15b': # rebinning for H-analysis
+  binning=np.linspace(0.05,0.9,num=15)
   print 'binning in HF CRs:',binning,'for Znn channels'
   cb.cp().channel(['Znn']).bin_id([5]).VariableRebin(binning)
-  
 
+if args.rebinning_scheme == 'LF1b_TT1b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([3,4]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([3]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=2)
+  print 'binning in TT CRs:',binning,'for Wln channel'
+  cb.cp().channel(['Wen','Wmn']).bin_id([7]).VariableRebin(binning)
+
+if args.rebinning_scheme == 'LF1b_TT1b_CC7b': # rebinning for H-analysis
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Zll channels'
+  cb.cp().channel(['Zee','Zmm']).bin_id([3,4]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.4,num=2)
+  print 'binning in LF CRs:',binning,'for Wln,Znn channels'
+  cb.cp().channel(['Wen','Wmn','Znn']).bin_id([3]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=2)
+  print 'binning in TT CRs:',binning,'for Wln channel'
+  cb.cp().channel(['Wen','Wmn']).bin_id([7]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+  print 'binning in CC CRs:',binning,'for Zll-high channels'
+#  cb.cp().channel(['Zee','Zmm']).bin_id([9]).VariableRebin(binning)
+  cb.cp().channel(['Znn']).bin_id([9]).VariableRebin(binning)
+  binning=np.linspace(0.0,0.9,num=8)
+
+  
 cb.FilterProcs(lambda x: drop_zero_procs(cb,x))
 cb.FilterSysts(lambda x: drop_zero_systs(x))
-#AUTHORIZED PERSON ONLY!! Drop QCD in Z+HF CR
-cb.FilterProcs(lambda x: drop_znnqcd(cb,x))
+#Luca cb.ForEachProc(lambda x: cb.FilterSysts(lambda y: drop_noRealShape_systs(x,y) if matching_proc(x,y) else None))
 
-if args.doVV:
-    cb.FilterSysts(lambda x: x.name() in "CMS_vhbb_VVcc")
+
+#AUTHORIZED PERSON ONLY!! Drop QCD in Z+HF CR
+#Luca cb.FilterProcs(lambda x: drop_znnqcd(cb,x))
+
+#Luca if args.doVV:
+#cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_VVcc")
     
+
 ### decrease bin statistical errors
 #Luca cb.cp().channel(['Zee','Zmm']).process(['Zj_cc','Zj_bbc','Zj_blc','Zj_ll']).ForEachProc(lambda x: decrease_bin_errors(x))
-
 
 cb.cp().channel(['Wen','Wmn','Znn']).process(['Wj_ll']).RenameSystematic(cb,'CMS_vhcc_vjetnlodetajjrw_13TeV_2016','CMS_Wj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016')
 cb.cp().channel(['Wen','Wmn','Znn']).process(['Wj_blc']).RenameSystematic(cb,'CMS_vhcc_vjetnlodetajjrw_13TeV_2016','CMS_Wj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016')
@@ -413,15 +484,50 @@ cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_ll']).RenameSystematic(cb,'CMS
 cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_blc']).RenameSystematic(cb,'CMS_vhcc_vjetnlodetajjrw_13TeV_2016','CMS_Zj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016')
 cb.cp().channel(['Zee','Zmm','Znn']).process(['Zj_cc','Zj_bbc']).RenameSystematic(cb,'CMS_vhcc_vjetnlodetajjrw_13TeV_2016','CMS_Zj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016')
 cb.cp().process(['TT']).RenameSystematic(cb,'CMS_vhcc_topptreweighting_13TeV_2016','CMS_vhcc_topptWeight_13TeV_2016')
-cb.cp().channel(['Wen','Wmn']).process(['Wj_ll','Wj_blc','Wj_bbc','Wj_cc','s_Top']).RenameSystematic(cb,'CMS_vhcc_ptwweights_13TeV_2016','CMS_vhcc_wptEWKWeight_13TeV_2016')
+#cb.cp().channel(['Wen','Wmn']).process(['Wj_ll','Wj_blc','Wj_bbc','Wj_cc','s_Top']).RenameSystematic(cb,'CMS_vhcc_ptwweights_13TeV_2016','CMS_vhcc_wptEWKWeight_13TeV_2016')
 cb.cp().process(['TT']).RenameSystematic(cb,'CMS_LHE_weights_pdf_TT','CMS_LHE_weights_pdf_ttbar')
 cb.cp().process(['TT']).RenameSystematic(cb,'CMS_LHE_weights_scale_muR_TT','CMS_LHE_weights_scale_muR_ttbar')
 cb.cp().process(['TT']).RenameSystematic(cb,'CMS_LHE_weights_scale_muF_TT','CMS_LHE_weights_scale_muF_ttbar')
+cb.cp().process(['VVother']).RenameSystematic(cb,'CMS_LHE_weights_pdf_VVother','CMS_LHE_weights_pdf_vvother')
+cb.cp().process(['VVcc']).RenameSystematic(cb,'CMS_LHE_weights_pdf_VVcc','CMS_LHE_weights_pdf_vzcc')
+cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVother']).RenameSystematic(cb,'CMS_LHE_weights_scale_muR_VVother','CMS_LHE_weights_scale_muR_vvother')
+cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVcc']).RenameSystematic(cb,'CMS_LHE_weights_scale_muR_VVcc','CMS_LHE_weights_scale_muR_vzcc')
+cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVother']).RenameSystematic(cb,'CMS_LHE_weights_scale_muF_VVother','CMS_LHE_weights_scale_muF_vvother')
+cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVcc']).RenameSystematic(cb,'CMS_LHE_weights_scale_muF_VVcc','CMS_LHE_weights_scale_muF_vzcc')
+
+if args.vjetNLO:
+ cb.FilterSysts(lambda x: x.name()=="CMS_Wj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016")
+ cb.FilterSysts(lambda x: x.name()=="CMS_Wj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016")
+ cb.FilterSysts(lambda x: x.name()=="CMS_Wj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016") 
+ cb.FilterSysts(lambda x: x.name()=="CMS_Zj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016")
+ cb.FilterSysts(lambda x: x.name()=="CMS_Zj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016")
+ cb.FilterSysts(lambda x: x.name()=="CMS_Zj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016") 
+ cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_topptWeight_13TeV_2016") 
+ cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_ptwweights_13TeV_2016") 
+ cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_ptzweights_13TeV_2016") 
+
+#Luca cb.cp().channel(['Zee','Zmm']).bin_id([2,4,6,8,10]).RenameSystematic(cb,'CMS_cTagWeight_JES','CMS_cTagWeight_JES_lowPt')
+#Luca cb.cp().channel(['Zee','Zmm']).bin_id([2,4,6,8,10]).RenameSystematic(cb,'CMS_cTagWeight_JER','CMS_cTagWeight_JER_lowPt')
+
+#Luca #Correlate the Zll and Wln lepton efficiencies uncertainties:
+#Luca cb.cp().channel(['Wmn']).RenameSystematic(cb,'CMS_vhcc_eff_m_Wln_13TeV_2016','CMS_vhcc_eff_m_13TeV_2016')
+#Luca cb.cp().channel(['Zmm']).RenameSystematic(cb,'CMS_vhcc_eff_m_Zll_13TeV_2016','CMS_vhcc_eff_m_13TeV_2016')
+#Luca cb.cp().channel(['Wen']).RenameSystematic(cb,'CMS_vhcc_eff_e_Wln_13TeV_2016','CMS_vhcc_eff_e_13TeV_2016')
+#Luca cb.cp().channel(['Zee']).RenameSystematic(cb,'CMS_vhcc_eff_e_Zll_13TeV_2016','CMS_vhcc_eff_e_13TeV_2016')
 
 
 #Luca cb.cp().signals().RenameSystematic(cb,'CMS_res_j_reg_13TeV','CMS_signal_resolution_13TeV')
 #Luca cb.cp().channel(['Wen','Wmn','Znn']).RenameSystematic(cb,'CMS_res_j_reg_13TeV','CMS_NoKinFit_res_j_reg_13TeV')
 #Luca cb.cp().channel(['Zee','Zmm']).RenameSystematic(cb,'CMS_res_j_reg_13TeV','CMS_KinFit_res_j_reg_13TeV')
+
+#if year=='2016':
+#    cb.cp().syst_name(["CMS_Wj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Wj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+#    cb.cp().syst_name(["CMS_Wj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Wj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+#    cb.cp().syst_name(["CMS_Wj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Wj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+#    cb.cp().syst_name(["CMS_Zj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Zj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+#    cb.cp().syst_name(["CMS_Zj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Zj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+#    cb.cp().syst_name(["CMS_Zj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016"]).ForEachProc(lambda x:symmetrise_syst(cb,x,'CMS_Zj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016'))
+
 
 if args.doVV:
   cb.SetGroup('signal_theory',['CMS_LHE_weights_pdf_VVcc','.*LHE_weights.*VVcc'])
@@ -431,16 +537,15 @@ else:
   cb.SetGroup('signal_theory',['pdf_Higgs.*','BR_hcc','QCDscale_ggZH','QCDscale_VH','.*LHE_weights.*ZHcc*','.*LHE_weights.*WHcc*','.*LHE_weights.*ggZHcc*'])
   cb.SetGroup('bkg_theory',['pdf_qqbar','pdf_gg','CMS_LHE_weights_pdf_VV*','CMS_vhbb_ST','.*LHE_weights.*ZHbb*','.*LHE_weights.*WHbb*','.*LHE_weights.*ggZHbb*','.*LHE_weights.*TT.*','.*LHE_weights.*VV*','.*LHE_weights.*Zj_ll.*','LHE_weights.*Zj_blc.*','LHE_weights.*Zj_bbc.*','LHE_weights.*Zj_cc.*','LHE_weights.*Wj_ll.*','LHE_weights.*Wj_blc.*','LHE_weights.*Wj_bbc.*','LHE_weights.*Wj_cc.*','LHE_weights.*s_Top.*','LHE_weights.*QCD.*'])
   
-cb.SetGroup('sim_modelling',['CMS_vhbb_ptwweights.*','CMS_vhbb_vjetnlodetajjrw.*'])
+cb.SetGroup('sim_modelling',['CMS_vhcc_ptwweights_13TeV_2016','CMS_vhcc_ptzweights_13TeV_2016','CMS_vhcc_topptWeight_13TeV_2016','.*vhcc_vjetnlodetajjrw.*','heavyFlavHadFrac_mismodelling.*'])
 cb.SetGroup('jes',['CMS_scale_j.*'])
 cb.SetGroup('jer',['CMS_res_j_13TeV_2016'])
 cb.SetGroup('ctag',['CMS_cTagWeight.*'])
 #Luca cb.SetGroup('mistag',['.*bTagWeight.*LFStats.*','.*bTagWeight.*HF_.*'])
 cb.SetGroup('lumi',['lumi_13TeV','.*puWeight.*'])
+#Luca cb.SetGroup('lep_eff',['.*eff_e.*','.*eff_m.*'])
 cb.SetGroup('lep_eff',['.*eff_e.*','.*eff_m.*'])
 cb.SetGroup('met',['.*MET.*'])
-
-
 
 #To rename processes:
 #cb.cp().ForEachObj(lambda x: x.set_process("WH_lep") if x.process()=='WH_hbb' else None)

@@ -18,7 +18,7 @@ for MODE in ['prefit','postfit']:
               XLOW = CHN_DICT_SR[CHN][i][2]
               XHIGH = CHN_DICT_SR[CHN][i][3]
               os.system(('./scripts/postFitPlot.py' \
-                  ' --file=shapes.root --ratio --extra_pad=0.53 --file_dir=%(OUTNAME)s --no_signal ' \
+                  ' --file=shapes_VZincl_1May.root --ratio --extra_pad=0.53 --file_dir=%(OUTNAME)s --no_signal ' \
                   ' --ratio_range 0.4,1.6 --empty_bin_error --channel=%(CHN)s --cr ' \
                   ' --outname %(OUTNAME)s --mode %(MODE)s --x_title="CMVA_{min}" --lumi="35.9 fb^{-1} (13 TeV)" '\
                   ' --x_axis_min %(XLOW)f --x_axis_max %(XHIGH)f --custom_x_range '\
