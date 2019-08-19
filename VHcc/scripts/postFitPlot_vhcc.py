@@ -45,7 +45,8 @@ parser.add_argument('--verbosity','-v', default=0, help='verbosity level (defaul
 parser.add_argument('--subbkg',         default=0, help='subtract backgrounds (default 0)')
 parser.add_argument('--extralabel',     default='', help='Extra label next to CMS')
 parser.add_argument('--doVV',    default=False, help='Set True for the VZ analysis')
-
+parser.add_argument('--mu',  default='', help='Set mu value for the signal strength')
+parser.add_argument('--keepPreFitSignal',default=False, help='Set to True if want to use the pre-fit signal overlaid (and not stacked) in postfit plots')
 args = parser.parse_args()
 
 
@@ -76,6 +77,7 @@ def getHistogram(fname, histname, dirnames='', postfitmode='prefit', allowEmpty=
         elif dirname in key.GetName(): dircheck=True
         if isinstance(histo,ROOT.TH1F) and key.GetName()==histname:
           histo.Scale(weight)
+          ROOT.TGaxis.SetMaxDigits(3)
           #if (histname.find("data")==-1 and histname.find("hbb")==-1 and histname.find("VVHF")==-1):
           #  histo.Smooth(5)
           if logx:
@@ -108,6 +110,7 @@ def getHistogram(fname, histname, dirnames='', postfitmode='prefit', allowEmpty=
         elif isinstance(histo,ROOT.TDirectory) and postfitmode in key.GetName() and dircheck:
             #return getHistogram(histo,histname, allowEmpty=allowEmpty, logx=logx)
             hist_tmp = getHistogram(histo,histname, allowEmpty=allowEmpty, logx=logx,inweight=weight)
+            print 'HistName, weight: ', histname, weight
             if hist_tmp is not None:
               if not isinstance(return_hist,ROOT.TH1F):
                 if histname.find("data")!=-1:
@@ -116,12 +119,12 @@ def getHistogram(fname, histname, dirnames='', postfitmode='prefit', allowEmpty=
                 return_hist = getHistogram(histo,histname, allowEmpty=allowEmpty, logx=logx,inweight=weight)[0]
               else: 
                 if histname.find("data")!=-1:
-                  if args.verbosity>2:
-                    print "adding to return_hist: ",histo,histname
+                  #if args.verbosity>2:
+                  print "adding to return_hist: ",histo,histname
                 return_hist.Add(getHistogram(histo,histname, allowEmpty=allowEmpty, logx=logx,inweight=weight)[0])
               if histname.find("data")!=-1:
-                if args.verbosity>2:
-                  print "total return_hist now: ",return_hist.Integral()  
+                #if args.verbosity>2:
+                print "total return_hist now: ",return_hist.Integral()  
 
   if not isinstance(return_hist,ROOT.TH1F):
     print 'Failed to find %(postfitmode)s histogram with name %(histname)s in file %(fname)s '%vars()
@@ -129,6 +132,7 @@ def getHistogram(fname, histname, dirnames='', postfitmode='prefit', allowEmpty=
       return [ROOT.TH1F('empty', '', 1, 0, 1), returnName]
     else:
       return None
+
   return [return_hist,returnName]
 
 def signalComp(leg,plots,colour,stacked):
@@ -194,177 +198,155 @@ histo_file = ROOT.TFile(shape_file_name)
 background_schemes = {}
 if not args.doVV :
   background_schemes = {
-    'Wen':[backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Wen':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})"+(args.mu),["ZH_hcc","WH_hcc"],2),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880)
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})",["VVcc"],607)
            ],
     
-    'Wmn':[backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Wmn':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})"+(args.mu),["ZH_hcc","WH_hcc"],2),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})",["VVcc"],607)
+         ],
+
+
+    'Zee':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})"+(args.mu),["ZH_hcc","ggZH_hcc"],2),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})",["VVcc"],607)           
            ],
 
-    'Zee':[backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Zmm':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})"+(args.mu),["ZH_hcc","ggZH_hcc"],2),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+other",["VVother"],866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})",["VVcc"],607)           
            ],
 
-    'Zmm':[backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Znn':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})"+(args.mu),["ZH_hcc","WH_hcc","ggZH_hbb"],2),
+           backgroundComp("QCD",["QCD"],16),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+other",["VVother"],866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
-           ],#,backgroundComp("ZHc#bar{c}",["ZH_hcc"],633),backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],801)],
-
-    'Znn':[backgroundComp("QCD",["QCD"],613),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
-           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})",["VVcc"],607)
            ]
     }
 
 if args.doVV :
   background_schemes = {
-    'Wen':[backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Wen':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})",["ZH_hcc","WH_hcc"],2),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})"+(args.mu),["VVcc"],607),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859)
            ],
-
-    'Wmn':[backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    
+    'Wmn':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})",["ZH_hcc","WH_hcc"],2),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})"+(args.mu),["VVcc"],607),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("WHc#bar{c}",["WH_hcc"],882)
-           ],
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859)
+         ],
 
-    'Zee':[backgroundComp("VV+other",["VVother"],866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+
+    'Zee':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})",["ZH_hcc","ggZH_hcc"],2),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})"+(args.mu),["VVcc"],607),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859)
            ],
 
-    'Zmm':[backgroundComp("VV+other",["VVother"],866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
+    'Zmm':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})",["ZH_hcc","ggZH_hcc"],2),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})"+(args.mu),["VVcc"],607),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
            backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859)
            ],
 
-    'Znn':[backgroundComp("VV+other",["VVother"], 866),
-           #backgroundComp("VV+bb",["VVbb"],867),
-           backgroundComp("VZ+cc",["VVcc"],859),
-           backgroundComp("QCD",["QCD"],613),
-           backgroundComp("Single top",["s_Top"],623),
-           backgroundComp("t#bar{t}",["TT"],633),
-           backgroundComp("W+udscg",["Wj_ll"],800),
-           backgroundComp("W+bl/cl",["Wj_blc"],801),
-           backgroundComp("W+b#bar{b}",["Wj_bbc"],802),
+    'Znn':[backgroundComp("VH(H#rightarrowb#bar{b})",["ZH_hbb","WH_hbb","ggZH_hbb"],881),
+           backgroundComp("VH(H#rightarrowc#bar{c})",["ZH_hcc","WH_hcc","ggZH_hbb"],2),
+           backgroundComp("VZ(Z#rightarrowc#bar{c})"+(args.mu),["VVcc"],607),
+           backgroundComp("VV+other",["VVother"], 623),
+           backgroundComp("QCD",["QCD"],16),
+           backgroundComp("Z+udsg",["Zj_ll"],821),
+           backgroundComp("Z+b/c",["Zj_blc"],830),
+           backgroundComp("Z+b#bar{b}/bc",["Zj_bbc"],829),
+           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
+           backgroundComp("W+udsg",["Wj_ll"],800),
+           backgroundComp("W+b/c",["Wj_blc"],801),
+           backgroundComp("W+b#bar{b}/bc",["Wj_bbc"],802),
            backgroundComp("W+c#bar{c}",["Wj_cc"],803),
-           backgroundComp("Z+udscg",["Zj_ll"],821),
-           backgroundComp("Z+bl/cl",["Zj_blc"],830),
-           backgroundComp("Z+b#bar{b}",["Zj_bbc"],829),
-           backgroundComp("Z+c#bar{c}",["Zj_cc"],824),
-           backgroundComp("ZHb#bar{b}",["ZH_hbb"],881),
-           backgroundComp("WHb#bar{b}",["WH_hbb"],880),
-           #backgroundComp("ggZHb#bar{b}",["ggZH_hbb"],590),
-           #backgroundComp("ZHc#bar{c}",["ZH_hcc"],883),
-           #backgroundComp("ggZHc#bar{c}",["ggZH_hcc"],882)
+           backgroundComp("t#bar{t}",["TT"],866),
+           backgroundComp("Single top",["s_Top"],859)
            ]
     }
 
@@ -374,10 +356,17 @@ plot_background_schemes = {'Wen':[],'Wmn':[],'Zee':[],'Zmm':[],'Znn':[]}
 
 #Extract relevant histograms from shape file
 [sighist,binname] = getHistogram(histo_file,'TotalSig', file_dir, mode, args.no_signal, log_x)
+[sighist_prefit,binname] = getHistogram(histo_file,'TotalSig', file_dir, 'prefit', args.no_signal, log_x)
+
 for i in range(0,sighist.GetNbinsX()):
   if sighist.GetBinContent(i) < y_axis_min: sighist.SetBinContent(i,y_axis_min)
+  if sighist_prefit.GetBinContent(i) < y_axis_min: sighist_prefit.SetBinContent(i,y_axis_min)
 bkghist = getHistogram(histo_file,'TotalBkg',file_dir, mode, logx=log_x)[0]
 splusbhist = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
+
+for i in range(1,splusbhist.GetNbinsX()+1):
+  print 'bin: ', i, '  expected events = ', splusbhist.GetBinContent(i), ' +/- ', splusbhist.GetBinError(i)
+
 if args.subbkg!=0:
   splusbhist_total = getHistogram(histo_file,'TotalProcs',file_dir, mode, logx=log_x)[0]
   vvhist = getHistogram(histo_file,'VVcc',file_dir, mode, logx=log_x)[0]
@@ -394,6 +383,10 @@ binerror_datahist = total_datahist.Clone()
 blind_datahist = total_datahist.Clone()
 total_datahist.SetMarkerStyle(20)
 blind_datahist.SetMarkerStyle(20)
+
+for i in range(1,total_datahist.GetNbinsX()+1):
+  print 'bin: ', i, '  observed events = ', total_datahist.GetBinContent(i)
+
 if args.subbkg!=0:
   blind_datahist.SetLineWidth(2)
 blind_datahist.SetLineColor(1)
@@ -441,7 +434,7 @@ for i,t in enumerate(background_schemes[channel]):
 
 stack = ROOT.THStack("hs","")
 for hists in bkg_histos:
-  print hists.GetName(), hists.Integral()
+  print "-->", hists.GetName(), hists.Integral()
   stack.Add(hists)
 
 xLabelsPerBin=(len(args.x_title.split(","))>1)
@@ -458,6 +451,12 @@ else:
 pads[0].cd()
 if(log_y): pads[0].SetLogy(1)
 if(log_x): pads[0].SetLogx(1)
+pads[0].SetTickx()
+pads[0].SetTicky()
+pads[1].SetTickx()
+pads[1].SetTicky()
+       
+
 if custom_x_range:
     if x_axis_max > bkghist.GetXaxis().GetXmax(): x_axis_max = bkghist.GetXaxis().GetXmax()
 if args.ratio:
@@ -481,7 +480,7 @@ if args.ratio:
     axish[1].GetXaxis().SetTitleFont(42)
     axish[1].GetXaxis().SetLabelOffset(0.01)
     axish[1].GetXaxis().SetLabelFont(42)
-    axish[1].GetYaxis().SetTitleOffset(1.85)
+    axish[1].GetYaxis().SetTitleOffset(1.5)
     axish[1].GetYaxis().SetTitleFont(42)
     axish[1].GetYaxis().SetLabelOffset(0.01)
     axish[1].GetYaxis().SetLabelFont(42)
@@ -489,7 +488,7 @@ if args.ratio:
     axish[1].GetXaxis().SetTitleSize(0.04)
 
     axish[0].GetXaxis().SetLabelOffset(0.01)
-    axish[0].GetYaxis().SetTitleOffset(1.85)
+    axish[0].GetYaxis().SetTitleOffset(1.5)
     axish[0].GetYaxis().SetLabelOffset(0.01)
     axish[0].GetYaxis().SetTitleSize(0.04)
   else:
@@ -591,7 +590,18 @@ else:
 if not args.no_signal:
   sighist.SetLineColor(ROOT.kRed)
   sighist.SetLineWidth(3)
-  sighist.Draw("histsame")
+  sighist_prefit.SetLineColor(ROOT.kRed)
+  sighist_prefit.SetLineWidth(3)
+  if 'prefit' in args.mode:
+    sighist.Scale(100)
+    sighist.Draw("histsame")
+  elif 'postfit' in args.mode:
+    if not args.keepPreFitSignal :
+      sighist.Scale(100)
+      sighist.Draw("histsame")
+    else :
+      sighist_prefit.Scale(100)
+      sighist_prefit.Draw("histsame")
   if args.subbkg!=0:
     vvhist.SetLineColor(ROOT.kBlack)
     vvhist.SetFillColor(17)
@@ -626,10 +636,10 @@ if args.subbkg!=0:
   legend = plot.PositionedLegend(0.4,0.22,3,0.03)
   plot.Set(legend, NColumns=1)
 else:
-  legend = plot.PositionedLegend(0.350,0.30,3,0.03)
+  legend = plot.PositionedLegend(0.46,0.28,3,0.02,0.025)
   plot.Set(legend, NColumns=2)
 legend.SetTextFont(42)
-legend.SetTextSize(0.028)
+legend.SetTextSize(0.027)
 legend.SetFillColor(0)
 legend.AddEntry(total_datahist,"Data","PE")
 #Drawn on legend in reverse order looks better
@@ -642,13 +652,13 @@ if not args.no_signal:
   legend.AddEntry(splusbhist,"S+B uncertainty","f")
   if args.subbkg==0:
     if not args.doVV:
-      legend.AddEntry(sighist,"VH,H#rightarrowc#bar{c}","l")
+      legend.AddEntry(sighist,"VH(H#rightarrowc#bar{c})x100","l")
     if args.doVV:
-      legend.AddEntry(sighist,"VZ,Z#rightarrowc#bar{c}","l")
+      legend.AddEntry(sighist,"VZ(Z#rightarrowc#bar{c})x100","l")
   else:
-    legend.AddEntry(sighist,"VH,H#rightarrowc#bar{c}","f")
+    legend.AddEntry(sighist,"VH(H#rightarrowc#bar{c})","f")
   if args.subbkg!=0:
-    legend.AddEntry(vvhist,"VZ,Z#rightarrowc#bar{c}","f")
+    legend.AddEntry(vvhist,"VZ(Z#rightarrowc#bar{c})","f")
 else:
   legend.AddEntry(splusbhist,"MC uncertainty","f")
 latex = ROOT.TLatex()
@@ -663,9 +673,11 @@ latex2.SetTextAngle(0)
 latex2.SetTextColor(ROOT.kBlack)
 latex2.SetTextSize(0.028)
 if args.extralabel=="":
-  setY=0.84
+#Luca  setY=0.84
+  setY=0.60
 else:
-  setY=0.78
+  setY=0.71
+#Luca  setY=0.78
 setX=0.18
 
 latex2.DrawLatex(setX,setY,channel_label)
@@ -689,7 +701,8 @@ if args.subbkg!=0:
 if args.subbkg==0:
   ROOT.gStyle.SetTitleFont(42)
 plot.FixTopRange(pads[0], plot.GetPadYMax(pads[0]), extra_pad if extra_pad>0 else 0.30)
-plot.DrawCMSLogo(pads[0], 'CMS', args.extralabel, 11, 0.045, 0.05, 1.0, '', 1.0)
+#Luca plot.DrawCMSLogo(pads[0], 'CMS', args.extralabel, 10, 0.04, 0.05, 1.0, '', 0.8)
+plot.DrawCMSLogo(pads[0], 'CMS', args.extralabel, 10, 0.04, 0.05, 1.0, '', 0.8)
 plot.DrawTitle(pads[0], args.lumi, 3)
 
 #Add ratio plot if required

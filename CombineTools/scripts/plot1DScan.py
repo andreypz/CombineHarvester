@@ -236,7 +236,7 @@ pt.SetTextAlign(11)
 pt.SetTextFont(42)
 pt.Draw()
 
-plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,  cmsTextSize = 1.)
+plot.DrawCMSLogo(pads[0], args.logo, args.logo_sub, 11, 0.045, 0.035, 1.2,"#sqrt{s}=13 TeV - 35.9 fb^{-1} (2016)", cmsTextSize = 0.7)
 
 legend_l = 0.69
 if len(other_scans) > 0:

@@ -14,7 +14,9 @@ def AddCommonSystematics(cb):
   cb.cp().process(['ggZH_hbb','ggZH_hbb']).AddSyst(cb,'pdf_Higgs_gg', 'lnN', ch.SystMap()(1.024))
   
   cb.cp().process(signal).AddSyst(cb,'BR_hcc', 'lnN', ch.SystMap()((1.05,0.97)))
-  cb.cp().process(signal).AddSyst(cb,'BR_hbb', 'lnN', ch.SystMap()(1.005))
+#Luca   cb.cp().process(['ZH_hcc','WH_hcc','ggZH_hcc']).AddSyst(cb,'BR_hcc', 'lnN', ch.SystMap()((1.05,0.97)))
+  cb.cp().process(['ZH_hbb','WH_hbb','ggZH_hbb']).AddSyst(cb,'BR_hbb', 'lnN', ch.SystMap()(1.005))
+#  cb.cp().process(['ZH_hbb','WH_hbb','ggZH_hbb']).AddSyst(cb,'BR_hbb', 'lnN', ch.SystMap()(1.20))
 
   
   cb.cp().process(['ggZH_hbb','ggZH_hcc']).AddSyst(cb,'QCDscale_ggZH', 'lnN',ch.SystMap()((1.251,0.811)))
@@ -60,7 +62,7 @@ def AddCommonSystematics(cb):
 
   #Theory uncertainties: pdf acceptance, to be re-evaluated
   cb.cp().process(['ZH_hbb','ZH_hcc']).AddSyst(cb,'CMS_LHE_weights_pdf_ZH', 'lnN', ch.SystMap()(1.01)) 
-  cb.cp().process(['WH_hbb','ZH_hcc']).AddSyst(cb,'CMS_LHE_weights_pdf_WH', 'lnN', ch.SystMap()(1.01))
+  cb.cp().process(['WH_hbb','WH_hcc']).AddSyst(cb,'CMS_LHE_weights_pdf_WH', 'lnN', ch.SystMap()(1.01))
   cb.cp().process(['TT']).AddSyst(cb,    'CMS_LHE_weights_pdf_TT', 'lnN', ch.SystMap()(1.005))
   cb.cp().process(['Zj_ll']).AddSyst(cb,'CMS_LHE_weights_pdf_Zj_ll', 'lnN', ch.SystMap()(1.05))
   cb.cp().process(['Zj_blc']).AddSyst(cb,'CMS_LHE_weights_pdf_Zj_blc', 'lnN', ch.SystMap()(1.03))
@@ -123,6 +125,11 @@ def AddSystematics2016(cb, splitJEC=False):
 
 
 ####################### SCALE FACTORS RATEPARAM
+#Luca   # SR Hbb
+#Luca   cb.cp().channel(['Wen','Wmn','Zee','Zmm','Znn']).process(['ZH_hbb','WH_hbb',"ggZH_hbb"]).AddSyst(cb,
+#Luca      'SF_VHbb', 'rateParam', ch.SystMap('bin_id')
+#Luca      ([1,3,5,7,9],1.0))
+
   
   # TT Zll
   cb.cp().channel(['Zee','Zmm']).process(['TT']).AddSyst(cb,

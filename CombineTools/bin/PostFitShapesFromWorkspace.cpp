@@ -133,6 +133,8 @@ int main(int argc, char* argv[]) {
         FNERROR("Could not locate workspace in input file"));
   }
 
+  ws->var("r")->setRange(-20,100);
+
   // Create CH instance and parse the workspace
   ch::CombineHarvester cmb;
   cmb.SetFlag("workspaces-use-clone", true);

@@ -139,9 +139,11 @@ parser.add_argument(
 parser.add_argument(
  '--doVV', default=False, help="""if True assume we are running the VZ(cc) analysis""")
 parser.add_argument(
- '--vjetNLO', default=False, help="""if True assume we are running with V+jets NLO samples""")
+ '--vjetsNLO', default=False, help="""if True assume we are running with V+jets NLO samples""")
 parser.add_argument(
  '--mjj',  default=True, help="""if True assume we are running the mjj analysis""")
+parser.add_argument(
+ '--doHbb',  default=False, help="""if True assume producing the datacards with VHbb as signal process""")
 
 args = parser.parse_args()
 
@@ -211,16 +213,25 @@ input_folders = {
 }
 
 if not args.doVV:
-  bkg_procs = {
-    'Wen' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
-    'Wmn' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
-    'Zmm' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
-    'Zee' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
-    'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVother','VVcc','QCD'],
-    #'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVother','VVbb','VVcc'],
-  }
+  if not args.doHbb:
+    bkg_procs = {
+      'Wen' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Wmn' : ['WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Zmm' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Zee' : ['ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVother','VVcc','QCD'],
+      #'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVother','VVbb','VVcc'],
+    }
+  else:
+    bkg_procs = {
+      'Wen' : ['WH_hcc','ZH_hcc','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Wmn' : ['WH_hcc','ZH_hcc','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Zmm' : ['ZH_hcc','ggZH_hcc','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Zee' : ['ZH_hcc','ggZH_hcc','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother','VVcc'],
+      'Znn' : ['ZH_hcc','ggZH_hcc','WH_hcc','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','VVother','VVcc','QCD'],
+    }
 else:
-  bkg_procs = {
+    bkg_procs = {
     'Wen' : ['WH_hcc','ZH_hcc','WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother'],
     'Wmn' : ['WH_hcc','ZH_hcc','WH_hbb','ZH_hbb','s_Top','TT','Wj_ll','Wj_blc','Wj_bbc','Wj_cc','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother'],
     'Zmm' : ['ZH_hcc','ggZH_hcc','ZH_hbb','ggZH_hbb','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','VVother'],
@@ -229,14 +240,23 @@ else:
   }
 
 if not args.doVV:
-  sig_procs = {
-    'Wen' : ['WH_hcc','ZH_hcc'],
-    'Wmn' : ['WH_hcc','ZH_hcc'],
-    'Zmm' : ['ZH_hcc','ggZH_hcc'],
-    'Zee' : ['ZH_hcc','ggZH_hcc'],
-    'Znn' : ['ZH_hcc','ggZH_hcc','WH_hcc']
+  if not args.doHbb:
+    sig_procs = {
+      'Wen' : ['WH_hcc','ZH_hcc'],
+      'Wmn' : ['WH_hcc','ZH_hcc'],
+      'Zmm' : ['ZH_hcc','ggZH_hcc'],
+      'Zee' : ['ZH_hcc','ggZH_hcc'],
+      'Znn' : ['ZH_hcc','ggZH_hcc','WH_hcc']
     }
-  
+  else:
+    sig_procs = {
+      'Wen' : ['WH_hbb','ZH_hbb'],
+      'Wmn' : ['WH_hbb','ZH_hbb'],
+      'Zmm' : ['ZH_hbb','ggZH_hbb'],
+      'Zee' : ['ZH_hbb','ggZH_hbb'],
+      'Znn' : ['ZH_hbb','ggZH_hbb','WH_hbb']
+    }
+    
 else:
   sig_procs = {
     'Wen' : ['VVcc'],
@@ -495,16 +515,17 @@ cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVcc']).RenameSystematic(cb
 cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVother']).RenameSystematic(cb,'CMS_LHE_weights_scale_muF_VVother','CMS_LHE_weights_scale_muF_vvother')
 cb.cp().channel(['Wen','Wmn','Zmm','Zee']).process(['VVcc']).RenameSystematic(cb,'CMS_LHE_weights_scale_muF_VVcc','CMS_LHE_weights_scale_muF_vzcc')
 
-if args.vjetNLO:
+if args.vjetsNLO:
  cb.FilterSysts(lambda x: x.name()=="CMS_Wj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016")
  cb.FilterSysts(lambda x: x.name()=="CMS_Wj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016")
  cb.FilterSysts(lambda x: x.name()=="CMS_Wj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016") 
  cb.FilterSysts(lambda x: x.name()=="CMS_Zj_0hf_vhcc_vjetnlodetajjrw_13TeV_2016")
  cb.FilterSysts(lambda x: x.name()=="CMS_Zj_1hf_vhcc_vjetnlodetajjrw_13TeV_2016")
  cb.FilterSysts(lambda x: x.name()=="CMS_Zj_2hf_vhcc_vjetnlodetajjrw_13TeV_2016") 
- cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_topptWeight_13TeV_2016") 
+ #cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_topptWeight_13TeV_2016") 
  cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_ptwweights_13TeV_2016") 
  cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_ptzweights_13TeV_2016") 
+ cb.FilterSysts(lambda x: x.name()=="CMS_vhcc_vjetnlodetajjrw_13TeV_2016") 
 
 #Luca cb.cp().channel(['Zee','Zmm']).bin_id([2,4,6,8,10]).RenameSystematic(cb,'CMS_cTagWeight_JES','CMS_cTagWeight_JES_lowPt')
 #Luca cb.cp().channel(['Zee','Zmm']).bin_id([2,4,6,8,10]).RenameSystematic(cb,'CMS_cTagWeight_JER','CMS_cTagWeight_JER_lowPt')

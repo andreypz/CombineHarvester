@@ -1,0 +1,34 @@
+{
+  "cmb": {
+    "TwoSigmaUp": 72.20,
+    "TwoSigmaDown": 20.00,
+    "OneSigmaUp": 53.02,
+    "OneSigmaDown": 26.79,
+    "Limit": 37.38,
+    "Observed": 69.88
+  },
+  "0L": {
+    "TwoSigmaUp": 151.46,
+    "TwoSigmaDown": 42.08,
+    "OneSigmaUp": 110.91,
+    "OneSigmaDown": 56.35,
+    "Limit": 78.63,
+    "Observed": 83.30
+  },
+  "1L": {
+    "TwoSigmaUp": 140.81,
+    "TwoSigmaDown": 38.12,
+    "OneSigmaUp": 102.35,
+    "OneSigmaDown": 50.99,
+    "Limit": 71.75,
+    "Observed": 110.01
+  },
+  "2L": {
+    "TwoSigmaUp": 113.23,
+    "TwoSigmaDown": 30.19,
+    "OneSigmaUp": 81.90,
+    "OneSigmaDown": 40.55,
+    "Limit": 57.25,
+    "Observed": 93.42
+  }
+}

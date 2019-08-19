@@ -1403,7 +1403,7 @@ def DrawCMSLogo(pad, cmsText, extraText, iPosX, relPosX, relPosY, relExtraDY, ex
     # float cmsTextOffset    = 0.1;  // only used in outOfFrame version
 
     # ratio of 'CMS' and extra text size
-    extraOverCmsTextSize = 0.76
+    extraOverCmsTextSize = 0.67
 
     outOfFrame = False
     if iPosX / 10 == 0:
