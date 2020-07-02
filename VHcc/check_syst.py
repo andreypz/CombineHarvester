@@ -22,9 +22,6 @@ procs = ['ZH_hcc','WH_hcc','s_Top','TT','Zj_ll','Zj_blc','Zj_bbc','Zj_cc','Wj_ll
 categ = ['high_Zmm', 'high_Zee', 'low_Zmm', 'low_Zee', 'Wmunu', 'Wenu', 'Znn']
 #categ = ['high_Zmm']
 
-systs = ['CMS_scale_j_13TeV_2016', 'CMS_res_j_13TeV_2016', 'CMS_vhcc_puWeight_2016', 
-         #         'CMS_LHE_weights_scale_muF_Wj_ll', 'CMS_LHE_weights_scale_muF_Wj_blc',
-         'CMS_Lep_SF']
 systs = ['CMS_scale_j_RelativePtBB_13TeV_2016', 'CMS_scale_j_RelativePtEC2_13TeV_2016', 'CMS_scale_j_PileUpDataMC_13TeV_2016',
          'CMS_scale_j_RelativeJERHF_13TeV_2016', 'CMS_scale_j_RelativeJEREC1_13TeV_2016',
          'CMS_scale_j_13TeV_2016','CMS_res_j_13TeV_2016',
@@ -36,6 +33,7 @@ systs = ['CMS_scale_j_RelativePtBB_13TeV_2016', 'CMS_scale_j_RelativePtEC2_13TeV
 #systs = ['CMS_scale_j_13TeV_2016','CMS_scale_j_RelativePtBB_13TeV_2016']
 #systs = ['CMS_cTagWeight_muF', 'CMS_cTagWeight_PU', 'CMS_cTagWeight_JES', 'CMS_vhcc_vjetnlodetajjrw_13TeV_2016']
 #systs = ['CMS_cTagWeight_JES', 'CMS_vhcc_vjetnlodetajjrw_13TeV_2016']
+systs = ['CMS_Lep_SF']
 
 CtoC = {'high_Zmm':'Zmm', 'high_Zee':'Zee', 'low_Zmm':'Zmm', 'low_Zee':'Zee', 'Wmunu':'Wmn', 'Wenu':'Wen', 'Znn':'Znn'}
 regions = ['VZ_SR', 'VH_SR', 'ttbar',
